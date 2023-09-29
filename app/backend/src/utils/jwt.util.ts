@@ -1,19 +1,15 @@
 import * as jwt from 'jsonwebtoken';
+import { IPayload } from '../Interfaces/IPayload';
 
 const secret = process.env.JWT_SECRET || 'secret';
 
-type TokenPayload = {
-  id: number,
-  email: string,
-};
-
-function sign(payload: TokenPayload): string {
+function sign(payload: IPayload): string {
   const token = jwt.sign(payload, secret);
   return token;
 }
 
-function verify(token: string): TokenPayload {
-  const data = jwt.verify(token, secret) as TokenPayload;
+function verify(token: string): IPayload {
+  const data = jwt.verify(token, secret) as IPayload;
   return data;
 }
 

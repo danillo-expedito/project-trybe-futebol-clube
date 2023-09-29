@@ -30,7 +30,7 @@ describe('Login Test', function () {
             message: 'All fields must be filled',
         });
     });
-    it('if receives an invalid email, should return a 400 error', async function () {
+    it('if receives an invalid email, should return a 401 error', async function () {
         const { status, body } = await chai.request(app).
         post('/login').send(UserMock.userBodyWithInvalidEmail);
 
@@ -39,9 +39,33 @@ describe('Login Test', function () {
             message: 'Invalid email or password',
         });
     });
-    it('if receives an invalid password, should return a 400 error', async function () {
+    it('if receives an invalid password, should return a 401 error', async function () {
         const { status, body } = await chai.request(app).
         post('/login').send(UserMock.userBodyWithInvalidPassword);
+
+        expect(status).to.be.equal(401);
+        expect(body).to.be.deep.equal({
+            message: 'Invalid email or password',
+        });
+    });
+    it('if receives an invalid format email, should return a 401 error', async function () {
+        const { status, body } = await chai.request(app).
+        post('/login').send({
+            email: '@admin.com',
+            password: '12345',
+        });
+
+        expect(status).to.be.equal(401);
+        expect(body).to.be.deep.equal({
+            message: 'Invalid email or password',
+        });
+    });
+    it('if receives an invalid format password, should return a 401 error', async function () {
+        const { status, body } = await chai.request(app).
+        post('/login').send({
+            email: UserMock.validEmail,
+            password: '12345',
+        });
 
         expect(status).to.be.equal(401);
         expect(body).to.be.deep.equal({

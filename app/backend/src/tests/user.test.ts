@@ -34,18 +34,18 @@ describe('Login Test', function () {
         const { status, body } = await chai.request(app).
         post('/login').send(UserMock.userBodyWithInvalidEmail);
 
-        expect(status).to.be.equal(400);
+        expect(status).to.be.equal(401);
         expect(body).to.be.deep.equal({
-            message: 'Invalid email',
+            message: 'Invalid email or password',
         });
     });
     it('if receives an invalid password, should return a 400 error', async function () {
         const { status, body } = await chai.request(app).
         post('/login').send(UserMock.userBodyWithInvalidPassword);
 
-        expect(status).to.be.equal(400);
+        expect(status).to.be.equal(401);
         expect(body).to.be.deep.equal({
-            message: 'Invalid password',
+            message: 'Invalid email or password',
         });
     });
     it('if receives a valid email and password, should return a 200 status', async function () {

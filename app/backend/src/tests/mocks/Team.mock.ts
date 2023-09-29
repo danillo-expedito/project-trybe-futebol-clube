@@ -9,6 +9,12 @@ const teams = [
     }
 ]
 
+const team = {
+    id: 5,
+    teamName: 'Team 5',
+}
+
 export default {
     teams,
+    team,
 }

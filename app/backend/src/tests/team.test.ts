@@ -20,4 +20,26 @@ describe('Teams Test', function () {
         expect(status).to.be.equal(200);
         expect(body).to.be.deep.equal(TeamMock.teams);
     });
+    it('should return a team', async function () {
+        sinon.stub(SequelizeTeam, 'findByPk').resolves(TeamMock.team as any);
+
+        const { status, body } = await chai.request(app).get('/teams/5');
+
+        expect(status).to.be.equal(200);
+        expect(body).to.be.deep.equal(TeamMock.team);
+    });
+    it('Should return a 404 error if the id is not found', async function () {
+        sinon.stub(SequelizeTeam, 'findByPk').resolves(null);
+
+        const { status, body } = await chai.request(app).get('/teams/6');
+
+        expect(status).to.be.equal(404);
+        expect(body).to.be.deep.equal({
+            message: 'Team not found',
+        });
+    });
+    
+    afterEach(function () {
+        sinon.restore();
+    });
 })

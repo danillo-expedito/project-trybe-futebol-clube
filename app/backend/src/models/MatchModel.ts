@@ -1,13 +1,14 @@
-// import IMatch from 'src/Interfaces/Match/IMatch';
+import IMatch from '../Interfaces/Match/IMatch';
 import IMatchModel from '../Interfaces/Match/IMatchModel';
 import SequelizeMatch from '../database/models/SequelizeMatch';
 import SequelizeTeam from '../database/models/SequelizeTeam';
+import { NewEntity } from '../Interfaces';
 
 export default class MatchModel implements IMatchModel {
   private model = SequelizeMatch;
   private teamModel = SequelizeTeam;
 
-  async findAll(filter?: boolean) {
+  async findAll(filter?: boolean): Promise<IMatch[]> {
     const matches = await this.model
       .findAll(
         { include:
@@ -23,13 +24,19 @@ export default class MatchModel implements IMatchModel {
     return matches.filter((match) => match.inProgress === filter);
   }
 
-  async finishMatch(id: number) {
-    const match = await this.model.findByPk(id);
-    if (!match) {
-      throw new Error('Match not found');
-    }
+  async finishMatch(id: number): Promise<IMatch | null> {
+    const [affectedRows] = await this.model.update({ inProgress: false }, { where: { id } });
+    if (affectedRows === 0) return null;
 
-    const updatedMatch = await match.update({ inProgress: !match.inProgress });
+    const match = await this.model.findByPk(id);
+    return match;
+  }
+
+  async update(id: IMatch['id'], score: Partial<NewEntity<IMatch>>): Promise<IMatch | null> {
+    const [affectedRows] = await this.model.update(score, { where: { id } });
+    if (affectedRows === 0) return null;
+
+    const updatedMatch = await this.model.findByPk(id);
     return updatedMatch;
   }
 }

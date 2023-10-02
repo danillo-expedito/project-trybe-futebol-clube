@@ -34,6 +34,17 @@ class Validations {
     req.body.user = validToken as IPayload;
     next();
   }
+
+  static validateScore(req: Request, res: Response, next: NextFunction): Response | void {
+    const score = req.body;
+    const requiredKeys = ['homeTeamGoals', 'awayTeamGoals'];
+    const notFoundKeys = requiredKeys.find((key) => !Object.keys(score).includes(key));
+    if (notFoundKeys) {
+      return res.status(400).json({ message: `${notFoundKeys} is required` });
+    }
+
+    next();
+  }
 }
 
 export default Validations;

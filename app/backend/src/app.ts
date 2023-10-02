@@ -1,5 +1,6 @@
 import * as express from 'express';
 import router from './routes';
+import './database/models/associations';
 
 class App {
   public app: express.Express;

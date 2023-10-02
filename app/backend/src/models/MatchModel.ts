@@ -17,9 +17,19 @@ export default class MatchModel implements IMatchModel {
       );
 
     if (filter === undefined) {
-      return matches;
+      return matches.map((match) => match);
     }
 
     return matches.filter((match) => match.inProgress === filter);
+  }
+
+  async finishMatch(id: number) {
+    const match = await this.model.findByPk(id);
+    if (!match) {
+      throw new Error('Match not found');
+    }
+
+    const updatedMatch = await match.update({ inProgress: !match.inProgress });
+    return updatedMatch;
   }
 }

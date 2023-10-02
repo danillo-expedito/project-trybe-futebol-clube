@@ -1,16 +1,19 @@
 import { Request, Response, Router } from 'express';
 import LoginController from '../controller/LoginController';
-// import Auth from '../middlewares/auth.middleware';
-// import { IPayload } from '../Interfaces/IPayload';
+import Validations from '../middlewares/Validations';
 
 const loginController = new LoginController();
 const router = Router();
 
-router.post('/', (req: Request, res: Response) => loginController.login(req, res));
-// router.get('/role', Auth.authenticate, (req: Request, res: Response) => {
-//   const { role } = req.user as IPayload;
-
-//   res.status(200).json({ role });
-// });
+router.post(
+  '/',
+  Validations.validateLogin,
+  (req: Request, res: Response) => loginController.login(req, res),
+);
+router.get(
+  '/role',
+  Validations.validateToken,
+  (req: Request, res: Response) => res.status(200).json({ role: req.body.user.role }),
+);
 
 export default router;

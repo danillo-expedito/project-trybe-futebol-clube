@@ -6,8 +6,7 @@ export default class LoginController {
   constructor(private loginService: LoginService = new LoginService()) {}
 
   public async login(req: Request, res: Response) {
-    const { email, password } = req.body;
-    const serviceResponse = await this.loginService.login(email, password);
+    const serviceResponse = await this.loginService.login(req.body);
     if (serviceResponse.status !== 'SUCCESSFUL') {
       return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
     }

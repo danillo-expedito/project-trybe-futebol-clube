@@ -7,7 +7,7 @@ export default class MatchModel implements IMatchModel {
   private model = SequelizeMatch;
   private teamModel = SequelizeTeam;
 
-  async findAll() {
+  async findAll(filter?: boolean) {
     const matches = await this.model
       .findAll(
         { include:
@@ -16,6 +16,10 @@ export default class MatchModel implements IMatchModel {
             { model: this.teamModel, as: 'awayTeam', attributes: ['teamName'] }] },
       );
 
-    return matches;
+    if (filter === undefined) {
+      return matches;
+    }
+
+    return matches.filter((match) => match.inProgress === filter);
   }
 }

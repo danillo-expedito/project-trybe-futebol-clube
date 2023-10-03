@@ -92,7 +92,6 @@ export default class TeamService {
   public static teamWithPoints(teamName: string, teamMatches: IMatch[], id: number):
   ITeamLeaderboard {
     const points = TeamService.totalPoints(teamMatches, id);
-    const victories = TeamService.totalVictories(teamMatches, id);
     const draws = TeamService.totalDraws(teamMatches, id);
     const losses = TeamService.totalLosses(teamMatches, id);
     const goalsFavor = TeamService.goalsFavor(teamMatches, id);
@@ -101,12 +100,35 @@ export default class TeamService {
       name: teamName,
       totalPoints: points,
       totalGames: teamMatches.length,
-      totalVictories: victories,
+      totalVictories: TeamService.totalVictories(teamMatches, id),
       totalDraws: draws,
       totalLosses: losses,
       goalsFavor,
       goalsOwn,
+      goalsBalance: goalsFavor - goalsOwn,
+      efficiency: Number(((points / (teamMatches.length * 3)) * 100).toFixed(2)),
     };
+  }
+
+  public static teamClassification(teams: ITeamLeaderboard[]): ITeamLeaderboard[] {
+    return teams.sort((a, b) => {
+      switch (true) {
+        case a.totalPoints > b.totalPoints:
+          return -1;
+        case a.totalPoints < b.totalPoints:
+          return 1;
+        case a.totalVictories > b.totalVictories:
+          return -1;
+        case a.totalVictories < b.totalVictories:
+          return 1;
+        case a.goalsBalance > b.goalsBalance:
+          return -1;
+        case a.goalsBalance < b.goalsBalance:
+          return 1;
+        default: return a.goalsFavor > b.goalsFavor
+          ? -1 : 1;
+      }
+    });
   }
 
   public async leaderboard(): Promise<ServiceResponse<ITeamLeaderboard[]>> {
@@ -120,6 +142,8 @@ export default class TeamService {
       return TeamService.teamWithPoints(team.teamName, teamMatches, id);
     });
 
-    return { status: 'SUCCESSFUL', data: teamsLeaderboard };
+    const teamsLeaderboardSorted = TeamService.teamClassification(teamsLeaderboard);
+
+    return { status: 'SUCCESSFUL', data: teamsLeaderboardSorted };
   }
 }

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { IPayload } from '../Interfaces/IPayload';
 import JWT from '../utils/jwt.util';
+// import TeamModel from '../models/TeamModel';
 
 class Validations {
   static validateLogin(req: Request, res: Response, next: NextFunction): Response | void {
@@ -52,6 +53,22 @@ class Validations {
     const notFoundKeys = requiredKeys.find((key) => !Object.keys(match).includes(key));
     if (notFoundKeys) {
       return res.status(400).json({ message: `${notFoundKeys} is required` });
+    }
+    // const { homeTeamId, awayTeamId } = match;
+    // const homeTeamExists = new TeamModel().findById(Number(homeTeamId));
+    // const awayTeamExists = new TeamModel().findById(Number(awayTeamId));
+    // if (!homeTeamExists || !awayTeamExists) {
+    //   return res.status(404).json({ message: 'There is no team with such id!' });
+    // }
+
+    next();
+  }
+
+  static validateTeams(req: Request, res: Response, next: NextFunction): Response | void {
+    const { homeTeamId, awayTeamId } = req.body;
+    if (homeTeamId === awayTeamId) {
+      return res.status(422)
+        .json({ message: 'It is not possible to create a match with two equal teams' });
     }
 
     next();

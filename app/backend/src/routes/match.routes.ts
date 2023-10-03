@@ -22,6 +22,7 @@ router.post(
   '/',
   Validations.validateToken,
   Validations.validateMatch,
+  Validations.validateTeams,
   (req: Request, res: Response) => matchController.createMatch(req, res),
 );
 export default router;

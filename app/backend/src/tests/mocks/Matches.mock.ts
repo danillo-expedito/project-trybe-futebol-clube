@@ -44,7 +44,32 @@ const match = {
       }
 }
 
+const newMatch = {
+  id: 2,
+  homeTeamId: 2,
+  homeTeamGoals: 1,
+  awayTeamId: 8,
+  awayTeamGoals: 1,
+  inProgress: true,
+}
+
+const matchWithoutHomeTeamGoals = {
+  id: 2,
+  homeTeamId: 2,
+  awayTeamId: 8,
+  awayTeamGoals: 1,
+  inProgress: true,
+}
+
+const newScore = {
+  homeTeamGoals: 1,
+  awayTeamGoals: 2,
+}
+
 export default {
   allMatches,
   match,
+  newMatch,
+  newScore,
+  matchWithoutHomeTeamGoals,
 }

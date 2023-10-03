@@ -24,11 +24,19 @@ export default class MatchModel implements IMatchModel {
     return matches.filter((match) => match.inProgress === filter);
   }
 
+  async findById(id: number): Promise<IMatch | null> {
+    const match = await this.model.findByPk(id);
+    if (!match) return null;
+
+    const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals, inProgress }: IMatch = match;
+    return { id, homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals, inProgress };
+  }
+
   async finishMatch(id: number): Promise<IMatch | null> {
     const [affectedRows] = await this.model.update({ inProgress: false }, { where: { id } });
     if (affectedRows === 0) return null;
 
-    const match = await this.model.findByPk(id);
+    const match = await this.findById(id);
     return match;
   }
 
@@ -36,7 +44,15 @@ export default class MatchModel implements IMatchModel {
     const [affectedRows] = await this.model.update(score, { where: { id } });
     if (affectedRows === 0) return null;
 
-    const updatedMatch = await this.model.findByPk(id);
+    const updatedMatch = await this.findById(id);
     return updatedMatch;
+  }
+
+  async create(match: NewEntity<IMatch>): Promise<IMatch> {
+    const newMatch = await this.model.create({ ...match, inProgress: true });
+    const { id, homeTeamId, awayTeamId,
+      homeTeamGoals, awayTeamGoals, inProgress }: IMatch = newMatch;
+
+    return { id, homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals, inProgress };
   }
 }

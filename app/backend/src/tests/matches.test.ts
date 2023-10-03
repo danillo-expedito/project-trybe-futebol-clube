@@ -33,11 +33,10 @@ describe('Matches Test', function () {
     });
     it('should update a match score', async function () {
         sinon.stub(SequelizeMatch, 'update').resolves([1] as any);
-        sinon.stub(SequelizeMatch, 'findByPk').resolves(MatchesMock.match as any);
         sinon.stub(Validations, 'validateScore').returns();
         sinon.stub(JWT, 'verify').resolves();
 
-        const { status, body } = await chai.request(app).put('/matches/5')
+        const { status, body } = await chai.request(app).patch('/matches/5')
         .set('authorization', 'validToken').send(MatchesMock.newScore);
 
         expect(status).to.be.equal(200);
@@ -49,7 +48,7 @@ describe('Matches Test', function () {
         sinon.stub(Validations, 'validateScore').returns();
         sinon.stub(JWT, 'verify').resolves();
 
-        const { status, body } = await chai.request(app).put('/matches/5')
+        const { status, body } = await chai.request(app).patch('/matches/5')
         .set('authorization', 'validToken').send(MatchesMock.newScore);
 
         expect(status).to.be.equal(404);
@@ -60,7 +59,7 @@ describe('Matches Test', function () {
         sinon.stub(SequelizeMatch, 'findByPk').resolves(MatchesMock.match as any);
         sinon.stub(JWT, 'verify').resolves();
 
-        const { status, body } = await chai.request(app).put('/matches/5/finish')
+        const { status, body } = await chai.request(app).patch('/matches/5/finish')
         .set('authorization', 'validToken');
 
         expect(status).to.be.equal(200);
@@ -73,28 +72,36 @@ describe('Matches Test', function () {
     
       const { status, body } = await chai.request(app).post('/matches')
           .set('authorization', 'validToken')
-          .send();
+          .send({
+            homeTeamId: 2,
+            homeTeamGoals: 1,
+            awayTeamId: 8,
+            awayTeamGoals: 1,
+          });
     
         expect(status).to.equal(201);
         expect(body).to.deep.equal(MatchesMock.newMatch);
-      });
+    });
+    it('shouldn\'t create a match without a token', async function() {
+        const { status, body } = await chai.request(app).post('/matches')
+        .send({
+          homeTeamId: 2,
+          homeTeamGoals: 1,
+          awayTeamId: 8,
+          awayTeamGoals: 1,
+        })
     
-      it('shouldn\'t create a match without a token', async function() {
-        const { status, body } = await chai.request(app).post('/matches');
-    
-        expect(status).to.equal(404);
+        expect(status).to.equal(401);
         expect(body.message).to.equal('Token not found');
-      });
-    
-      it('shouldn\'t create a match with an invalid token', async function() {
+    });
+    it('shouldn\'t create a match with an invalid token', async function() {
         const { status, body } = await chai.request(app).post('/matches')
           .set('authorization', 'invalidToken');
     
         expect(status).to.equal(401);
         expect(body.message).to.equal('Token must be a valid token');
-      });
-    
-      it('shouldn\'t create a match with invalid body data', async function() {
+    });
+    it('shouldn\'t create a match with invalid body data', async function() {
         sinon.stub(JWT, 'verify').resolves();
     
         const { status, body } = await chai.request(app).post('/matches')
@@ -103,7 +110,7 @@ describe('Matches Test', function () {
     
         expect(status).to.equal(400);
         expect(body.message).to.equal('homeTeamGoals is required');
-      });
+    });
     afterEach(function () {
         sinon.restore();
     });

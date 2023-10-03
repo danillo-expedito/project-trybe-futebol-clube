@@ -6,6 +6,6 @@ export default interface IMatchModel {
   finishMatch(id: number): Promise<IMatch | null>;
   update(id: number, score: IScore): Promise<IMatch | null>;
   //   findById(id: number): Promise<IMatch | null>;
-  //   create(match: IMatch): Promise<IMatch>;
+  create(match: Partial<IMatch>): Promise<IMatch>;
 //   delete(id: number): Promise<boolean>;
 }

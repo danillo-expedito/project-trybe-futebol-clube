@@ -25,4 +25,5 @@ router.post(
   Validations.validateTeams,
   (req: Request, res: Response) => matchController.createMatch(req, res),
 );
+
 export default router;

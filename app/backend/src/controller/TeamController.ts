@@ -21,7 +21,10 @@ export default class TeamController {
   }
 
   public async showLeaderboard(req: Request, res: Response) {
-    const serviceResponse = await this.teamService.leaderboard();
+    const endpoint = req.path.split('/')[1];
+    console.log(endpoint);
+
+    const serviceResponse = await this.teamService.leaderboard(endpoint);
 
     if (serviceResponse.status !== 'SUCCESSFUL') {
       return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);

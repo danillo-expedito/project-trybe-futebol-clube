@@ -10,4 +10,9 @@ router.get(
   (req: Request, res: Response) => teamController.showLeaderboard(req, res),
 );
 
+router.get(
+  '/away',
+  (req: Request, res: Response) => teamController.showLeaderboard(req, res),
+);
+
 export default router;
